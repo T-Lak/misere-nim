@@ -1,4 +1,15 @@
 package wakeline.challenge.miserenim.game;
 
-public class Player {
+import lombok.Getter;
+
+@Getter
+public enum Player {
+   HUMAN("human"),
+   COMPUTER("computer");
+
+   private final String player;
+
+   Player(String player) {
+      this.player = player;
+   }
 }

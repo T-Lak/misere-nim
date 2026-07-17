@@ -1,4 +1,6 @@
 package wakeline.challenge.miserenim.game;
 
-public class GameStatus {
+public enum GameStatus {
+   IN_PROGRESS,
+   FINISHED
 }
