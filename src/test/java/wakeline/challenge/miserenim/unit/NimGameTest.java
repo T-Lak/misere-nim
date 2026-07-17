@@ -58,8 +58,25 @@ public class NimGameTest {
    void testExceptionOnGameOver() {
       game.makeMove(3, Player.HUMAN);
       game.makeMove(1, Player.COMPUTER);
+      game.makeMove(1, Player.HUMAN);
 
-      assertThrows(GameOverException.class, () -> game.makeMove(1, Player.HUMAN));
+      assertThrows(GameOverException.class, () -> game.makeMove(1, Player.COMPUTER));
+   }
+
+   @Test
+   void testExceptionOnIllegalStatusChange() {
+      game.makeMove(3, Player.HUMAN);
+      game.makeMove(2, Player.COMPUTER);
+
+      assertThrows(IllegalStateException.class, () -> game.setGameStatus(GameStatus.IN_PROGRESS));
+   }
+
+   @Test
+   void testExceptionOnGetWinnerWhileGameInProgress() {
+      game.makeMove(2, Player.HUMAN);
+      game.makeMove(1, Player.COMPUTER);
+
+      assertThrows(IllegalStateException.class, () -> game.getWinner());
    }
 
    @Test
@@ -73,6 +90,10 @@ public class NimGameTest {
 
       game.makeMove(2, Player.HUMAN);
       assertEquals(1, game.getMatches());
+
+      game.makeMove(1, Player.COMPUTER);
       assertTrue(game.isGameOver());
+
+      assertEquals(Player.HUMAN, game.getWinner());
    }
 }

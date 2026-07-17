@@ -34,11 +34,31 @@ public class NimGame {
 
       this.matches -= matches;
 
+      if (isGameOver()) {
+         this.status = GameStatus.FINISHED;
+      }
+
       this.currentPlayer = (this.currentPlayer.equals(Player.HUMAN)) ? Player.COMPUTER : Player.HUMAN;
    }
 
    public boolean isGameOver() {
-      return this.matches <= 1;
+      return this.matches == 0;
+   }
+
+   public void setGameStatus(GameStatus other) {
+      if (this.status == GameStatus.FINISHED && other == GameStatus.IN_PROGRESS) {
+         throw new IllegalStateException("Cannot restart a finished game.");
+      }
+
+      this.status = other;
+   }
+
+   public Player getWinner() {
+      if (this.status != GameStatus.FINISHED) {
+         throw new IllegalStateException("Game is still in progress.");
+      }
+
+      return this.currentPlayer;
    }
 
    private boolean isValidNumberOfMatches(int matches) {
