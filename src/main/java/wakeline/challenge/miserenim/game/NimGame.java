@@ -2,13 +2,11 @@ package wakeline.challenge.miserenim.game;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.stereotype.Component;
 import wakeline.challenge.miserenim.exception.GameOverException;
 import wakeline.challenge.miserenim.exception.InsufficientMatchesException;
 import wakeline.challenge.miserenim.exception.InvalidMoveException;
 import wakeline.challenge.miserenim.exception.NotYourTurnException;
 
-@Component
 @AllArgsConstructor
 @Getter
 public class NimGame {
