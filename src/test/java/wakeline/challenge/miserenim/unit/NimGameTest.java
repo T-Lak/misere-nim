@@ -8,6 +8,7 @@ import wakeline.challenge.miserenim.exception.InvalidMoveException;
 import wakeline.challenge.miserenim.exception.NotYourTurnException;
 import wakeline.challenge.miserenim.game.GameStatus;
 import wakeline.challenge.miserenim.game.NimGame;
+import wakeline.challenge.miserenim.game.NimGameFactory;
 import wakeline.challenge.miserenim.game.Player;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +20,7 @@ public class NimGameTest {
 
    @BeforeEach
    void setup() {
-      game = new NimGame("test-id", 5, GameStatus.IN_PROGRESS, Player.HUMAN);
+      this.game = NimGameFactory.create(5, Player.HUMAN);
    }
 
    @Test
