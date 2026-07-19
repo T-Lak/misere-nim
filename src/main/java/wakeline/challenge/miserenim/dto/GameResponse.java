@@ -7,6 +7,7 @@ import wakeline.challenge.miserenim.game.Player;
 import java.util.List;
 
 public record GameResponse(
+   String id,
    Player currentPlayer,
    int matchesLeft,
    GameStatus status,

@@ -10,6 +10,7 @@ public class GameToDtoMapper {
 
    public static GameResponse toGameResponse(NimGame game) {
       return new GameResponse(
+           game.getId(),
            game.getCurrentPlayer(),
            game.getMatches(),
            game.getStatus(),
