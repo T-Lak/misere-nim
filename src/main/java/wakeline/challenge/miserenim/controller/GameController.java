@@ -23,11 +23,12 @@ public class GameController {
    @PostMapping("/create")
    public ResponseEntity<GameCreationResponse> createGame(
            @RequestParam int matches,
-           @RequestParam String player
+           @RequestParam String player,
+           @RequestParam String strategyType
    ) {
       log.info("Game creation request with {} matches and Player: {}", matches, player);
 
-      NimGame game = this.gameService.createNewGame(matches, Player.fromString(player.toLowerCase()));
+      NimGame game = this.gameService.createNewGame(matches, Player.fromString(player.toLowerCase()), strategyType);
       GameCreationResponse response = new GameCreationResponse(
               game.getId(),
               game.getMatches(),

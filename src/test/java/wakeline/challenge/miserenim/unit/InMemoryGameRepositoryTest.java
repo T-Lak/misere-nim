@@ -25,7 +25,7 @@ public class InMemoryGameRepositoryTest {
 
    @BeforeEach
    void setup() {
-      this.game = NimGameFactory.create(5, Player.HUMAN);
+      this.game = NimGameFactory.create(5, Player.HUMAN, "random");
    }
 
    @Test
@@ -37,9 +37,9 @@ public class InMemoryGameRepositoryTest {
 
    @Test
    void testShouldCleanCacheAfterGameExpired() {
-      NimGame game1 = NimGameFactory.create(3, Player.COMPUTER);
-      NimGame game2 = NimGameFactory.create(4, Player.HUMAN);
-      NimGame game3 = NimGameFactory.create(10, Player.COMPUTER);
+      NimGame game1 = NimGameFactory.create(3, Player.COMPUTER, "random");
+      NimGame game2 = NimGameFactory.create(4, Player.HUMAN, "random");
+      NimGame game3 = NimGameFactory.create(10, Player.COMPUTER, "random");
 
       FakeTicker ticker = new FakeTicker();
       InMemoryGameRepository repository = new InMemoryGameRepository(ticker::read);

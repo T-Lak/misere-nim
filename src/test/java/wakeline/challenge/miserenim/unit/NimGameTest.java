@@ -20,81 +20,80 @@ public class NimGameTest {
 
    @BeforeEach
    void setup() {
-      this.game = NimGameFactory.create(5, Player.HUMAN);
+      this.game = NimGameFactory.create(5, Player.HUMAN, "stub");
    }
 
    @Test
    void testMoveReducesMatches() {
-      game.makeMove(1, Player.HUMAN);
+      game.makeHumanMove(1);
 
       assertEquals(4, game.getMatches());
    }
 
    @Test
    void testSwitchesToNextPlayerAfterMove() {
-      game.makeMove(1, Player.HUMAN);
+      game.makeHumanMove(1);
 
       assertEquals(Player.COMPUTER, game.getCurrentPlayer());
    }
 
    @Test
    void testExceptionOnInvalidMove() {
-      assertThrows(InvalidMoveException.class, () -> game.makeMove(4, Player.HUMAN));
-      assertThrows(InvalidMoveException.class, () -> game.makeMove(0, Player.HUMAN));
+      assertThrows(InvalidMoveException.class, () -> game.makeHumanMove(4));
+      assertThrows(InvalidMoveException.class, () -> game.makeHumanMove(0));
    }
 
    @Test
    void testExceptionOnWrongPlayer() {
-      assertThrows(NotYourTurnException.class, () -> game.makeMove(1, Player.COMPUTER));
+      game.makeHumanMove(1);
+
+      assertThrows(NotYourTurnException.class, () -> game.makeHumanMove(1));
    }
 
    @Test
    void testExceptionOnInsufficientMatches() {
-      game.makeMove(3, Player.HUMAN);
+      game.makeHumanMove(2);
+      game.makeComputerMove();
 
-      assertThrows(InsufficientMatchesException.class, () -> game.makeMove(3, Player.COMPUTER));
+      assertThrows(InsufficientMatchesException.class, () -> game.makeHumanMove(3));
    }
 
    @Test
    void testExceptionOnGameOver() {
-      game.makeMove(3, Player.HUMAN);
-      game.makeMove(1, Player.COMPUTER);
-      game.makeMove(1, Player.HUMAN);
+      game.makeHumanMove(3);
+      game.makeComputerMove();
 
-      assertThrows(GameOverException.class, () -> game.makeMove(1, Player.COMPUTER));
+      assertThrows(GameOverException.class, () -> game.makeHumanMove(1));
    }
 
    @Test
-   void testExceptionOnIllegalStatusChange() {
-      game.makeMove(3, Player.HUMAN);
-      game.makeMove(2, Player.COMPUTER);
+   void testExceptionOnIllegalStateChange() {
+      game.makeHumanMove(3);
+      game.makeComputerMove();
 
       assertThrows(IllegalStateException.class, () -> game.setGameStatus(GameStatus.IN_PROGRESS));
    }
 
    @Test
    void testExceptionOnGetWinnerWhileGameInProgress() {
-      game.makeMove(2, Player.HUMAN);
-      game.makeMove(1, Player.COMPUTER);
+      game.makeHumanMove(2);
+      game.makeComputerMove();
 
       assertThrows(IllegalStateException.class, () -> game.getWinner());
    }
 
    @Test
    void testFullGamePlay() {
-      game.makeMove(1, Player.HUMAN);
+      game.makeHumanMove(1);
       assertEquals(Player.COMPUTER, game.getCurrentPlayer());
 
-      game.makeMove(1, Player.COMPUTER);
+      game.makeComputerMove();
       assertEquals(Player.HUMAN, game.getCurrentPlayer());
       assertEquals(3, game.getMatches());
 
-      game.makeMove(2, Player.HUMAN);
+      game.makeHumanMove(2);
       assertEquals(1, game.getMatches());
-
-      game.makeMove(1, Player.COMPUTER);
       assertTrue(game.isGameOver());
-
-      assertEquals(Player.HUMAN, game.getWinner());
+      assertEquals(Player.COMPUTER, game.getWinner());
    }
 }

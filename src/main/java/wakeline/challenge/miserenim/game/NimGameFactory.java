@@ -1,12 +1,17 @@
 package wakeline.challenge.miserenim.game;
 
+import wakeline.challenge.miserenim.strategy.StrategyType;
+
 import java.util.UUID;
 
 public class NimGameFactory {
 
-   public static NimGame create(int matches, Player player) {
+   public static NimGame create(int matches, Player player, String strategyName) {
       String id = UUID.randomUUID().toString();
-      return new NimGame(id, matches, GameStatus.IN_PROGRESS, player);
+
+      StrategyType strategyType = StrategyType.valueOf(strategyName.toUpperCase());
+
+      return new NimGame(id, matches, GameStatus.IN_PROGRESS, player, strategyType);
    }
 
 }

@@ -20,7 +20,9 @@ public class GameControllerTest {
    void testCreateGame() throws Exception {
       mockMvc.perform(post("/api/v1/misere-nim/create")
                       .param("matches", "5")
-                      .param("player", "human"))
+                      .param("player", "human")
+                      .param("strategyType", "random")
+              )
               .andExpect(status().isOk());
    }
 
@@ -28,7 +30,9 @@ public class GameControllerTest {
    void testExceptionOnInsufficientNumberOfMatches() throws Exception {
       mockMvc.perform(post("/api/v1/misere-nim/create")
                       .param("matches", "0")
-                      .param("player", "human"))
+                      .param("player", "human")
+                      .param("strategyType", "random")
+              )
               .andExpect(status().isBadRequest());
    }
 
@@ -36,7 +40,9 @@ public class GameControllerTest {
    void testExceptionOnIllegalPlayer() throws Exception {
       mockMvc.perform(post("/api/v1/misere-nim/create")
                       .param("matches", "0")
-                      .param("player", "Any"))
+                      .param("player", "Any")
+                      .param("strategyType", "random")
+              )
               .andExpect(status().isBadRequest());
    }
 
@@ -44,7 +50,9 @@ public class GameControllerTest {
    void testCaseInsensitivePlayerString() throws Exception {
       mockMvc.perform(post("/api/v1/misere-nim/create")
                       .param("matches", "2")
-                      .param("player", "Human"))
+                      .param("player", "Human")
+                      .param("strategyType", "random")
+              )
               .andExpect(status().isOk());
    }
 

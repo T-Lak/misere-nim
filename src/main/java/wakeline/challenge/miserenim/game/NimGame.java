@@ -1,46 +1,49 @@
 package wakeline.challenge.miserenim.game;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import wakeline.challenge.miserenim.exception.GameOverException;
 import wakeline.challenge.miserenim.exception.InsufficientMatchesException;
 import wakeline.challenge.miserenim.exception.InvalidMoveException;
 import wakeline.challenge.miserenim.exception.NotYourTurnException;
+import wakeline.challenge.miserenim.strategy.StrategyType;
 
 @AllArgsConstructor
 @Getter
+@Builder
 public class NimGame {
 
    private final String id;
    private int matches;
    private GameStatus status;
    private Player currentPlayer;
+   private StrategyType strategyType;
 
-   public void makeMove(int matches, Player player) {
-      if (isGameOver()) {
-         throw new GameOverException("The game is already over.");
-      }
-      if (!this.currentPlayer.equals(player)) {
-         throw new NotYourTurnException("It is not this player's turn.");
-      }
-      if (!isValidNumberOfMatches(matches)) {
-         throw new InvalidMoveException("You must take between 1 and 3 matches.");
-      }
-      if (!remainingMatchesSufficient(matches)) {
-         throw new InsufficientMatchesException("Not enough matches in the heap.");
-      }
-
-      this.matches -= matches;
+   public void makeHumanMove(int matches) {
+     this.validateMove(matches, Player.HUMAN);
+     this.applyMove(matches);
 
       if (isGameOver()) {
          this.status = GameStatus.FINISHED;
+      } else {
+         this.currentPlayer = Player.COMPUTER;
       }
+   }
 
-      this.currentPlayer = (this.currentPlayer.equals(Player.HUMAN)) ? Player.COMPUTER : Player.HUMAN;
+   public void makeComputerMove() {
+      int move = this.strategyType.getStrategy().calculateMove(this.matches);
+      applyMove(move);
+
+      if (isGameOver()) {
+         this.status = GameStatus.FINISHED;
+      } else {
+         this.currentPlayer = Player.HUMAN;
+      }
    }
 
    public boolean isGameOver() {
-      return this.matches == 0;
+      return this.matches == 1;
    }
 
    public void setGameStatus(GameStatus other) {
@@ -56,11 +59,28 @@ public class NimGame {
          throw new IllegalStateException("Game is still in progress.");
       }
 
-      return this.currentPlayer;
+      return (this.currentPlayer == Player.HUMAN) ? Player.COMPUTER : Player.HUMAN;
+   }
+
+   private void applyMove(int matches) {
+      this.matches -= matches;
+   }
+
+   private void validateMove(int matches, Player player) {
+      if (isGameOver()) throw new GameOverException("Game over.");
+      if (this.currentPlayer != player) throw new NotYourTurnException("Not your turn.");
+      if (matches < 1 || matches > 3) {
+         throw new InvalidMoveException("You must take between 1 and 3 matches.");
+      }
+      if ( matches > this.matches) {
+         throw new InsufficientMatchesException(
+              String.format("Request to remove %d matches, but only %d matches left.", matches, this.matches)
+         );
+      }
    }
 
    private boolean isValidNumberOfMatches(int matches) {
-      return matches >= 1 && matches <= 3;
+      return matches >= 1 && matches <= Math.min(3, this.matches);
    }
 
    private boolean remainingMatchesSufficient(int matches) {

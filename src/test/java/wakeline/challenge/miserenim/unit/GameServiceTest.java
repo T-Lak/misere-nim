@@ -7,6 +7,7 @@ import wakeline.challenge.miserenim.exception.InvalidMoveException;
 import wakeline.challenge.miserenim.game.NimGame;
 import wakeline.challenge.miserenim.game.Player;
 import wakeline.challenge.miserenim.service.GameService;
+import wakeline.challenge.miserenim.strategy.StrategyType;
 
 import static org.junit.Assert.*;
 
@@ -18,7 +19,7 @@ public class GameServiceTest {
 
    @Test
    void testShouldCreateGameWithValidParams() {
-      NimGame game = gameService.createNewGame(5, Player.HUMAN);
+      NimGame game = gameService.createNewGame(5, Player.HUMAN, "random");
 
       assertEquals(5, game.getMatches());
       assertEquals(Player.HUMAN, game.getCurrentPlayer());
@@ -27,6 +28,10 @@ public class GameServiceTest {
 
    @Test
    void shouldExceptionOnGameCreationWithInsufficientNumberOfMatches() {
-      assertThrows(InvalidMoveException.class, () -> gameService.createNewGame(1, Player.HUMAN));
+      assertThrows(InvalidMoveException.class, () -> gameService.createNewGame(
+              1,
+              Player.HUMAN,
+              "random"
+      ));
    }
 }

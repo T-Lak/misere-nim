@@ -12,4 +12,13 @@ public enum Player {
    Player(String player) {
       this.player = player;
    }
+
+   public static Player fromString(String text) {
+      for (Player p : Player.values()) {
+         if (p.player.equalsIgnoreCase(text)) {
+            return p;
+         }
+      }
+      throw new IllegalArgumentException("No constant with text " + text + " found");
+   }
 }

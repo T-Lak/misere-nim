@@ -16,17 +16,19 @@ public class GameService {
 
    private final InMemoryGameRepository inMemoryGameRepository;
 
-   public NimGame createNewGame(int matches, Player player) {
-      if (matches <= 2) {
+   public NimGame createNewGame(int matches, Player player, String strategyType) {
+      if (matches < 2) {
          throw new InvalidMoveException("Initial number of matches must be greater or equal to 2");
       }
 
-      NimGame game = NimGameFactory.create(matches, player);
+      NimGame game = NimGameFactory.create(matches, player, strategyType);
 
       inMemoryGameRepository.save(game);
       log.info("Created game with id {}", game.getId());
 
       return game;
    }
+
+
 
 }

@@ -1,4 +1,6 @@
 package wakeline.challenge.miserenim.strategy;
 
-public class ComputerStrategy {
+public interface ComputerStrategy {
+
+   int calculateMove(int remainingMatches);
 }
