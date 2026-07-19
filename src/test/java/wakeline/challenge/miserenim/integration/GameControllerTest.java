@@ -4,11 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.ObjectMapper;
+import wakeline.challenge.miserenim.dto.GameCreationRequest;
 import wakeline.challenge.miserenim.dto.GameCreationResponse;
 import wakeline.challenge.miserenim.dto.GameResponse;
+import wakeline.challenge.miserenim.dto.MoveRequest;
 import wakeline.challenge.miserenim.game.GameStatus;
 import wakeline.challenge.miserenim.game.Player;
 
@@ -29,16 +32,15 @@ public class GameControllerTest {
    @Test
    void testCreateGame() throws Exception {
       mockMvc.perform(post("/api/v1/misere-nim/create")
-                      .param("matches", "5")
-                      .param("player", "human")
-                      .param("strategyType", "random")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(MAPPER.writeValueAsString(new GameCreationRequest(5, "human", "random")))
               )
               .andExpect(status().isOk());
    }
 
    @Test
    void testCreateGameWithComputerToStart() throws Exception {
-      GameCreationResponse gameCreationResponse = this.createGame("5", "computer", "stub");
+      GameCreationResponse gameCreationResponse = this.createGame(5, "computer", "stub");
 
       assertEquals(4, gameCreationResponse.initialMatches());
    }
@@ -46,43 +48,39 @@ public class GameControllerTest {
    @Test
    void testExceptionOnInsufficientNumberOfMatches() throws Exception {
       mockMvc.perform(post("/api/v1/misere-nim/create")
-                      .param("matches", "0")
-                      .param("player", "human")
-                      .param("strategyType", "random")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(MAPPER.writeValueAsString(new GameCreationRequest(0, "human", "random")))
               )
-              .andExpect(status().isBadRequest());
+              .andExpect(status().isNotFound());
    }
 
    @Test
    void testExceptionOnIllegalPlayer() throws Exception {
       mockMvc.perform(post("/api/v1/misere-nim/create")
-                      .param("matches", "0")
-                      .param("player", "Any")
-                      .param("strategyType", "random")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(MAPPER.writeValueAsString(new GameCreationRequest(0, "Any", "random")))
               )
-              .andExpect(status().isBadRequest());
+              .andExpect(status().isNotFound());
    }
 
    @Test
    void testCaseInsensitivePlayerString() throws Exception {
       mockMvc.perform(post("/api/v1/misere-nim/create")
-                      .param("matches", "2")
-                      .param("player", "Human")
-                      .param("strategyType", "random")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(MAPPER.writeValueAsString(new GameCreationRequest(2, "Human", "random")))
               )
               .andExpect(status().isOk());
    }
 
    @Test
    void testGetGameState() throws Exception {
-      GameCreationResponse creation = createGame("5", "human", "stub");
+      GameCreationResponse creation = createGame(5, "human", "stub");
 
       MvcResult result = mockMvc.perform(get("/api/v1/misere-nim/" + creation.id()))
               .andExpect(status().isOk())
               .andReturn();
 
-      String jsonResponse = result.getResponse().getContentAsString();
-      GameResponse response = MAPPER.readValue(jsonResponse, GameResponse.class);
+      GameResponse response = MAPPER.readValue(result.getResponse().getContentAsString(), GameResponse.class);
 
       assertEquals(creation.id(), response.id());
       assertEquals(5, response.matchesLeft());
@@ -90,16 +88,9 @@ public class GameControllerTest {
 
    @Test
    void testHumanMoveProcessing() throws Exception {
-      GameCreationResponse gameCreationResponse = this.createGame("5", "human", "stub");
+      GameCreationResponse creation = this.createGame(5, "human", "stub");
 
-      MvcResult moveResult = mockMvc.perform(post("/api/v1/misere-nim/" + gameCreationResponse.id() + "/move")
-                      .param("matches", "2")
-              )
-              .andExpect(status().isOk())
-              .andReturn();
-
-      String jsonResponseForMove = moveResult.getResponse().getContentAsString();
-      GameResponse gameResponse = MAPPER.readValue(jsonResponseForMove, GameResponse.class);
+      GameResponse gameResponse = this.makeMove(creation.id(), 2);
 
       assertEquals(2, gameResponse.matchesLeft());
       assertEquals(2, gameResponse.moveHistory().size());
@@ -107,18 +98,24 @@ public class GameControllerTest {
       assertEquals(GameStatus.IN_PROGRESS, gameResponse.status());
    }
 
-   private GameCreationResponse createGame(String matches, String player, String strategy) throws Exception {
-      MvcResult creationResult = mockMvc.perform(post("/api/v1/misere-nim/create")
-                      .param("matches", matches)
-                      .param("player", player)
-                      .param("strategyType", strategy)
+   private GameCreationResponse createGame(int matches, String player, String strategy) throws Exception {
+      MvcResult result = mockMvc.perform(post("/api/v1/misere-nim/create")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(MAPPER.writeValueAsString(new GameCreationRequest(matches, player, strategy)))
               )
               .andExpect(status().isOk())
               .andReturn();
+      return MAPPER.readValue(result.getResponse().getContentAsString(), GameCreationResponse.class);
+   }
 
-      String jsonResponseForCreation = creationResult.getResponse().getContentAsString();
-
-      return MAPPER.readValue(jsonResponseForCreation, GameCreationResponse.class);
+   private GameResponse makeMove(String gameId, int matches) throws Exception {
+      MvcResult result = mockMvc.perform(post("/api/v1/misere-nim/" + gameId + "/move")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(MAPPER.writeValueAsString(new MoveRequest(matches)))
+              )
+              .andExpect(status().isOk())
+              .andReturn();
+      return MAPPER.readValue(result.getResponse().getContentAsString(), GameResponse.class);
    }
 
 }
