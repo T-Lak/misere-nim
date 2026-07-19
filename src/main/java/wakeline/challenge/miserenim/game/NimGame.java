@@ -40,7 +40,7 @@ public class NimGame {
       int move = this.strategyType.getStrategy().calculateMove(this.matches);
       applyMove(move);
 
-      this.moveHistory.add(new MoveLog(Player.COMPUTER, matches, this.matches));
+      this.moveHistory.add(new MoveLog(Player.COMPUTER, move, this.matches));
 
       if (isGameOver()) {
          this.status = GameStatus.FINISHED;
@@ -50,7 +50,7 @@ public class NimGame {
    }
 
    public boolean isGameOver() {
-      return this.matches == 1;
+      return this.matches == 0;
    }
 
    public void setGameStatus(GameStatus other) {
@@ -66,7 +66,8 @@ public class NimGame {
          throw new IllegalStateException("Game is still in progress.");
       }
 
-      return (this.currentPlayer == Player.HUMAN) ? Player.COMPUTER : Player.HUMAN;
+      Player loser = this.moveHistory.getLast().player();
+      return (loser == Player.HUMAN) ? Player.COMPUTER : Player.HUMAN;
    }
 
    private void applyMove(int matches) {
@@ -76,10 +77,10 @@ public class NimGame {
    private void validateMove(int matches, Player player) {
       if (isGameOver()) throw new GameOverException("Game over.");
       if (this.currentPlayer != player) throw new NotYourTurnException("Not your turn.");
-      if (matches < 1 || matches > 3) {
+      if (!this.isValidNumberOfMatches(matches)) {
          throw new InvalidMoveException("You must take between 1 and 3 matches.");
       }
-      if ( matches > this.matches) {
+      if (!this.remainingMatchesSufficient(matches)) {
          throw new InsufficientMatchesException(
               String.format("Request to remove %d matches, but only %d matches left.", matches, this.matches)
          );

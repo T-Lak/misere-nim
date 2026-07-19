@@ -12,9 +12,11 @@ public class GameToDtoMapper {
       return new GameResponse(
            game.getId(),
            game.getCurrentPlayer(),
+           game.getStrategyType(),
            game.getMatches(),
            game.getStatus(),
-           new ArrayList<>(game.getMoveHistory())
+           new ArrayList<>(game.getMoveHistory()),
+           game.isGameOver() ? game.getWinner() : null
       );
    }
 
@@ -23,6 +25,7 @@ public class GameToDtoMapper {
               game.getId(),
               game.getMatches(),
               game.getCurrentPlayer().toString(),
+              game.getStrategyType(),
               new ArrayList<>(game.getMoveHistory())
       );
    }

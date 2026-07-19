@@ -30,7 +30,6 @@ public class GameService {
       }
 
       inMemoryGameRepository.save(game);
-      log.info("Created game with id {}", game.getId());
 
       return game;
    }

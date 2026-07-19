@@ -2,9 +2,13 @@ package wakeline.challenge.miserenim.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import wakeline.challenge.miserenim.dto.ErrorResponse;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -57,8 +61,20 @@ public class GlobalExceptionHandler {
       );
    }
 
+   @ExceptionHandler(MethodArgumentNotValidException.class)
+   public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+      Map<String, String> errors = new HashMap<>();
+
+      String errorMessage = ex.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
+
+      errors.put("errorCode", "BAD_REQUEST");
+      errors.put("message", errorMessage);
+
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+   }
+
    @ExceptionHandler(Exception.class)
-   public ResponseEntity<ErrorResponse> handleGenericException(Exception exception) {
+   public ResponseEntity<ErrorResponse> handleGenericException() {
       return new ResponseEntity<>(
               new ErrorResponse("INTERNAL_ERROR", "An unexpected error occurred"),
               HttpStatus.NOT_FOUND
