@@ -9,6 +9,8 @@ import wakeline.challenge.miserenim.exception.InvalidMoveException;
 import wakeline.challenge.miserenim.exception.NotYourTurnException;
 import wakeline.challenge.miserenim.strategy.StrategyType;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Getter
 @Builder
@@ -19,10 +21,13 @@ public class NimGame {
    private GameStatus status;
    private Player currentPlayer;
    private StrategyType strategyType;
+   private List<MoveLog> moveHistory;
 
    public void makeHumanMove(int matches) {
      this.validateMove(matches, Player.HUMAN);
      this.applyMove(matches);
+
+     this.moveHistory.add(new MoveLog(Player.HUMAN, matches, this.matches));
 
       if (isGameOver()) {
          this.status = GameStatus.FINISHED;
@@ -34,6 +39,8 @@ public class NimGame {
    public void makeComputerMove() {
       int move = this.strategyType.getStrategy().calculateMove(this.matches);
       applyMove(move);
+
+      this.moveHistory.add(new MoveLog(Player.COMPUTER, matches, this.matches));
 
       if (isGameOver()) {
          this.status = GameStatus.FINISHED;

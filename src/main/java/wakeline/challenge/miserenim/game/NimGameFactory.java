@@ -2,6 +2,7 @@ package wakeline.challenge.miserenim.game;
 
 import wakeline.challenge.miserenim.strategy.StrategyType;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class NimGameFactory {
@@ -11,7 +12,7 @@ public class NimGameFactory {
 
       StrategyType strategyType = StrategyType.valueOf(strategyName.toUpperCase());
 
-      return new NimGame(id, matches, GameStatus.IN_PROGRESS, player, strategyType);
+      return new NimGame(id, matches, GameStatus.IN_PROGRESS, player, strategyType, new ArrayList<>());
    }
 
 }
