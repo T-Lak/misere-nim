@@ -51,7 +51,7 @@ public class GameControllerTest {
                       .contentType(MediaType.APPLICATION_JSON)
                       .content(MAPPER.writeValueAsString(new GameCreationRequest(0, "human", "random")))
               )
-              .andExpect(status().isNotFound());
+              .andExpect(status().isBadRequest());
    }
 
    @Test
@@ -60,7 +60,7 @@ public class GameControllerTest {
                       .contentType(MediaType.APPLICATION_JSON)
                       .content(MAPPER.writeValueAsString(new GameCreationRequest(0, "Any", "random")))
               )
-              .andExpect(status().isNotFound());
+              .andExpect(status().isBadRequest());
    }
 
    @Test

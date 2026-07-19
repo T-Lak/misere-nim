@@ -4,6 +4,10 @@ A Spring Boot-based REST API for playing the game of Misère Nim. In this versio
 
 The API supports playing against the computer. After every valid human move, the server automatically executes the computer's move and returns the resulting game state.
 
+### Architecture Notes
+- **Self-Protecting Domain**: The ```NimGame``` object contains all business logic. It knows how to validate its own moves and determine its own state.
+- **Global Exception Handling**: The API uses a ```@RestControllerAdvice``` to translate domain-specific exceptions (e.g., ```InvalidMoveException```) into standard HTTP 400 Bad Request responses.
+
 ### Tech Stack
 
 - Java 21
@@ -74,15 +78,11 @@ java -jar target/misere-nim-api.jar
 }
 ```
 
-### Allowed Constant
+### Allowed Constants
 #### **Player Types**: 
 - human, computer
 #### **Strategy Types**:
 - random, optimal
-
-### Architecture Notes
-- **Self-Protecting Domain**: The ```NimGame``` object contains all business logic. It knows how to validate its own moves and determine its own state.
-- **Global Exception Handling**: The API uses a ```@RestControllerAdvice``` to translate domain-specific exceptions (e.g., ```InvalidMoveException```) into standard HTTP 400 Bad Request responses.
 
 ### CURL Examples
 

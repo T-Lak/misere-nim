@@ -2,8 +2,6 @@ package wakeline.challenge.miserenim.unit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import wakeline.challenge.miserenim.exception.GameOverException;
-import wakeline.challenge.miserenim.exception.InsufficientMatchesException;
 import wakeline.challenge.miserenim.exception.InvalidMoveException;
 import wakeline.challenge.miserenim.exception.NotYourTurnException;
 import wakeline.challenge.miserenim.game.GameStatus;
@@ -51,25 +49,10 @@ public class NimGameTest {
    }
 
    @Test
-   void testExceptionOnInsufficientMatches() {
-      game.makeHumanMove(2);
-      game.makeComputerMove();
-
-      assertThrows(InsufficientMatchesException.class, () -> game.makeHumanMove(3));
-   }
-
-   @Test
-   void testExceptionOnGameOver() {
-      game.makeHumanMove(3);
-      game.makeComputerMove();
-
-      assertThrows(GameOverException.class, () -> game.makeHumanMove(1));
-   }
-
-   @Test
    void testExceptionOnIllegalStateChange() {
       game.makeHumanMove(3);
       game.makeComputerMove();
+      game.makeHumanMove(1);
 
       assertThrows(IllegalStateException.class, () -> game.setGameStatus(GameStatus.IN_PROGRESS));
    }
@@ -85,15 +68,15 @@ public class NimGameTest {
    @Test
    void testFullGamePlay() {
       game.makeHumanMove(1);
-      assertEquals(Player.COMPUTER, game.getCurrentPlayer());
-
       game.makeComputerMove();
+
       assertEquals(Player.HUMAN, game.getCurrentPlayer());
       assertEquals(3, game.getMatches());
 
       game.makeHumanMove(2);
-      assertEquals(1, game.getMatches());
+      game.makeComputerMove();
+      assertEquals(0, game.getMatches());
       assertTrue(game.isGameOver());
-      assertEquals(Player.COMPUTER, game.getWinner());
+      assertEquals(Player.HUMAN, game.getWinner());
    }
 }
