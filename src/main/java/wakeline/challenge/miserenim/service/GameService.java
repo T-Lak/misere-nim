@@ -10,8 +10,6 @@ import wakeline.challenge.miserenim.game.NimGameFactory;
 import wakeline.challenge.miserenim.game.Player;
 import wakeline.challenge.miserenim.repository.InMemoryGameRepository;
 
-import java.util.Optional;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -53,6 +51,11 @@ public class GameService {
       inMemoryGameRepository.save(game);
 
       return game;
+   }
+
+   public NimGame getGame(String gameId) {
+      return inMemoryGameRepository.findById(gameId)
+              .orElseThrow(() -> new GameNotFoundException("Game with ID " + gameId + " not found"));
    }
 
 }

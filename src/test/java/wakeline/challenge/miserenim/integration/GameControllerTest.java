@@ -13,6 +13,7 @@ import wakeline.challenge.miserenim.game.GameStatus;
 import wakeline.challenge.miserenim.game.Player;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,6 +71,21 @@ public class GameControllerTest {
                       .param("strategyType", "random")
               )
               .andExpect(status().isOk());
+   }
+
+   @Test
+   void testGetGameState() throws Exception {
+      GameCreationResponse creation = createGame("5", "human", "stub");
+
+      MvcResult result = mockMvc.perform(get("/api/v1/misere-nim/" + creation.id()))
+              .andExpect(status().isOk())
+              .andReturn();
+
+      String jsonResponse = result.getResponse().getContentAsString();
+      GameResponse response = MAPPER.readValue(jsonResponse, GameResponse.class);
+
+      assertEquals(creation.id(), response.id());
+      assertEquals(5, response.matchesLeft());
    }
 
    @Test

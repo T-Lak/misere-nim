@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import wakeline.challenge.miserenim.dto.GameCreationResponse;
 import wakeline.challenge.miserenim.dto.GameResponse;
 import wakeline.challenge.miserenim.game.NimGame;
@@ -43,12 +40,22 @@ public class GameController {
            @PathVariable String gameId,
            @RequestParam int matches
    ) {
-      log.info("Player requests to remove {} matches for game with id {}", matches, gameId);
+      log.info("Request to remove {} matches for game with id {}", matches, gameId);
 
       NimGame game = this.gameService.processHumanMove(gameId, matches);
       GameResponse response = GameToDtoMapper.toGameResponse(game);
 
       log.info("Sending game response object for game with id: {}", game.getId());
+
+      return ResponseEntity.ok(response);
+   }
+
+   @GetMapping("/{gameId}")
+   public ResponseEntity<GameResponse> getGameState(@PathVariable String gameId) {
+      log.info("Request state for game with id: {}", gameId);
+
+      NimGame game = this.gameService.getGame(gameId);
+      GameResponse response = GameToDtoMapper.toGameResponse(game);
 
       return ResponseEntity.ok(response);
    }
