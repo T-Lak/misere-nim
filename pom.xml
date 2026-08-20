@@ -8,7 +8,7 @@
 		<version>4.0.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>wakeline.challenge</groupId>
+	<groupId>challenge</groupId>
 	<artifactId>misere-nim-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
