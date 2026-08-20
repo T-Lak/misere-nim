@@ -8,7 +8,7 @@ import java.util.List;
 public record GameCreationResponse(
    String id,
    int initialMatches,
-   String PlayerToStart,
+   String playerToStart,
    StrategyType computerStrategy,
    List<MoveLog> moveHistory
 ) {}
