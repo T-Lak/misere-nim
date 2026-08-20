@@ -36,7 +36,7 @@ docker run -p 8080:8080 misere-nim-api
 ##### Run without Docker
 ```bash
 ./mvnw clean package
-java -jar target/misere-nim-api.jar
+java -jar target/misere-nim-api-0.0.1-SNAPSHOT.jar
 ```
 
 ### API Endpoints
